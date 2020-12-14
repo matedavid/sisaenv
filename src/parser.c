@@ -56,7 +56,7 @@ enum MNEMONIC token_to_mnemonic(char *token) {
 }
 
 
-void parse_mnemonic(char *mnemonic, enum MNEMONIC, char) {
+void parse_mnemonic(char *mnemonic) {
   char *token = strtok(mnemonic, " ");
   char *options = strtok(NULL, " "); 
   
