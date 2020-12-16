@@ -4,13 +4,13 @@
 #include <stdint.h>
 
 enum MNEMONIC {
-  // 0 - 12: 3-R type
+  // 0 - 15: 3-R type
   AND, OR, XOR, NOT,
   ADD, SUB, SHA, SHL,
   CMPLT, CMPLE, EMPTY_1, CMPEQ, 
   CMPLTU, CMPLEU, EMPTY_2, EMPTY_3,
 
-  // 13 - 18: 2-R type
+  // 16 - 21: 2-R type
   ADDI,
   LD,
   ST,
@@ -18,7 +18,7 @@ enum MNEMONIC {
   STB,
   JALR,
 
-  // 19 - 24: 1-R type
+  // 22 - 27: 1-R type
   BZ,
   BNZ,
   MOVI,

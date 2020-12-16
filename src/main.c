@@ -31,9 +31,11 @@ int main(int argc, char **argv) {
       --size;
     }
 
+    printf("%s: ", buff);
+
     uint8_t complete_code[16] = {0};
     parse_mnemonic(buff, &complete_code);
-    
+  
     for (int i = 15; i >= 0; --i)
       printf("%d", complete_code[i]);
     printf("\n");

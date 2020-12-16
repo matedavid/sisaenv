@@ -48,6 +48,8 @@ enum MNEMONIC token_to_mnemonic(char *token) {
     mnemonic = LDB;
   else if (strcmp(token, "STB") == 0)
     mnemonic = STB;
+  else if (strcmp(token, "JALR") == 0)
+    mnemonic = JALR;
   
   // 1-R type
   else if (strcmp(token, "BZ") == 0)
@@ -75,7 +77,7 @@ uint8_t mnemonic_to_code(enum MNEMONIC mnemonic_token) {
   else if (mnemonic_token >= CMPLT && mnemonic_token <= CMPLEU)
     decimal_code = 1;
   else if (mnemonic_token >= ADDI && mnemonic_token <= JALR)
-    decimal_code = (int)mnemonic_token - 11;
+    decimal_code = (int)mnemonic_token - 14;
   else if (mnemonic_token == BZ || mnemonic_token == BNZ)
     decimal_code = 8;
   else if (mnemonic_token == MOVI || mnemonic_token == MOVHI) 
@@ -102,7 +104,6 @@ void convert_type_3(uint8_t decimal_code, enum MNEMONIC token, int rd, int ra, i
     complete_code[15-(3-i)] = code_binary[i];
   // Copy registers
   for (int i = 11; i >= 3; --i) {
-    printf("%d %d %d\n", 11-i, 8-i, 5-i);
     if (i <= 11 && i >= 9) complete_code[i] = ra_binary[2-(11-i)];
     else if (i <= 8 && i >= 6) complete_code[i] = rb_binary[2-(8-i)];
     else complete_code[i] = rd_binary[2-(5-i)];
@@ -112,7 +113,35 @@ void convert_type_3(uint8_t decimal_code, enum MNEMONIC token, int rd, int ra, i
     complete_code[i] = specific_code_binary[i];
 
 }
+
+void convert_type_2(uint8_t decimal_code, int ra, int rother, int N6, uint8_t *complete_code) {
+  uint8_t ra_binary[3] = {0}, rother_binary[3] = {0}, N6_binary[6] = {0};
+  decimal_to_base(ra, 2, &ra_binary);
+  decimal_to_base(rother, 2, &rother_binary);
   
+  // TODO: Add support for negative -> binary conversion
+  if (N6 < 0) { 
+    N6 = -N6;
+    printf("Support for negative constants is not supported currently. Converting to positive.\n"); 
+  }
+  decimal_to_base(N6, 2, &N6_binary);
+  
+  uint8_t code_binary[4] = {0};
+  decimal_to_base(decimal_code, 2, &code_binary);
+  
+  // Copy code
+  for (int i = 3; i >= 0; --i)
+    complete_code[15-(3-i)] = code_binary[i];
+  // Copy registers
+  for (int i = 11; i >= 6; --i) {
+    if (i <= 11 && i >= 9) complete_code[i] = ra_binary[2-(11-i)];
+    else complete_code[i] = rother_binary[2-(8-i)];
+  }
+  // Copy N6 constant 
+  for (int i = 5; i >= 0; --i)
+    complete_code[i] = N6_binary[i];
+}
+
 void parse_options(enum MNEMONIC token, char *options, uint8_t *complete_code) {
   if (token >= AND && token <= CMPLEU) {
     // Type 3-R
@@ -132,6 +161,25 @@ void parse_options(enum MNEMONIC token, char *options, uint8_t *complete_code) {
     convert_type_3(mnemonic_to_code(token), token, rd, ra, rb, complete_code);
   } else if (token >= ADDI && token <= JALR) {
     // Type 2-R
+    char *register_a, *other_register;
+    int N6; 
+    if (token == LD || token == LDB) {
+      other_register = strtok(options, ",");
+      N6 = atoi(strtok(NULL, "("));
+      register_a = strtok(NULL, ")");
+    } else if (token == ST || token == STB) {
+      N6 = atoi(strtok(options, "("));
+      register_a = strtok(NULL, ")");
+      other_register = strtok(NULL, ","); 
+    } else {
+      other_register = strtok(options, ",");
+      register_a = strtok(NULL, ",");
+      N6 = 0;
+    }
+
+    int ra = (int)register_a[1] - (int)'0';
+    int rother = (int)other_register[1] - (int)'0';
+    convert_type_2(mnemonic_to_code(token), ra, rother, N6, complete_code);
   } else {
     // Type 1-R
   }
