@@ -122,7 +122,7 @@ void convert_type_2(uint8_t decimal_code, int ra, int rother, int N6, uint8_t *c
   // TODO: Add support for negative -> binary conversion
   if (N6 < 0) { 
     N6 = -N6;
-    printf("Support for negative constants is not supported currently. Converting to positive.\n"); 
+    printf("support for negative constants is not supported currently. converting to positive.\n"); 
   }
   decimal_to_base(N6, 2, &N6_binary);
   
@@ -140,6 +140,32 @@ void convert_type_2(uint8_t decimal_code, int ra, int rother, int N6, uint8_t *c
   // Copy N6 constant 
   for (int i = 5; i >= 0; --i)
     complete_code[i] = N6_binary[i];
+}
+
+void convert_type_1(uint8_t decimal_code, int reg, int e, int N8, uint8_t *complete_code) {
+  uint8_t reg_binary[3] = {0}, N8_binary[8] = {0};
+  decimal_to_base(reg, 2, &reg_binary);
+  
+  // TODO: Add support for negative -> binary conversion
+  if (N8 < 0) { 
+    N8 = -N8;
+    printf("support for negative constants is not supported currently. converting to positive.\n"); 
+  }
+  decimal_to_base(N8, 2, &N8_binary);
+  
+  uint8_t code_binary[4] = {0};
+  decimal_to_base(decimal_code, 2, &code_binary);
+  // Copy code
+  for (int i = 3; i >= 0; --i)
+    complete_code[15-(3-i)] = code_binary[i];
+  // Copy register
+  for (int i = 11; i >= 9; --i)
+    complete_code[i] = reg_binary[2-(11-i)];
+  // Copy e value
+  complete_code[8] = e;
+  // Copy N6 constant 
+  for (int i = 7; i >= 0; --i)
+    complete_code[i] = N8_binary[i];
 }
 
 void parse_options(enum MNEMONIC token, char *options, uint8_t *complete_code) {
@@ -182,6 +208,22 @@ void parse_options(enum MNEMONIC token, char *options, uint8_t *complete_code) {
     convert_type_2(mnemonic_to_code(token), ra, rother, N6, complete_code);
   } else {
     // Type 1-R
+    char *reg;
+    int N8, e;
+    
+    if (token == IN || token == OUT) {
+      N8 = atoi(strtok(options, ","));
+      reg = strtok(NULL, ",");
+    } else {
+      reg = strtok(options, ",");
+      N8 = atoi(strtok(NULL, ","));
+    }
+
+    if (token == BZ || token == MOVI || token == IN) e = 0;
+    else e = 1;
+
+    int r = (int)reg[1] - (int)'0';
+    convert_type_1(mnemonic_to_code(token), r, e, N8, complete_code);
   }
 }
 
@@ -199,6 +241,5 @@ void parse_mnemonic(char *mnemonic, uint8_t *complete_code) {
 
   uint8_t decimal_code = mnemonic_to_code(mnemonic_token);
   parse_options(mnemonic_token, options, complete_code);
-
 }
 
