@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "utils.h"
+
 enum MNEMONIC token_to_mnemonic(char *token) {
   enum MNEMONIC mnemonic;
   // 3-R type
@@ -23,6 +25,17 @@ enum MNEMONIC token_to_mnemonic(char *token) {
     mnemonic = SHA;
   else if (strcmp(token, "SHL") == 0)
     mnemonic = SHL;
+
+  else if (strcmp(token, "CMPLT") == 0)
+    mnemonic = CMPLT;
+  else if (strcmp(token, "CMPLE") == 0)
+    mnemonic = CMPLE;
+  else if (strcmp(token, "CMPEQ") == 0)
+    mnemonic = CMPEQ;
+  else if (strcmp(token, "CMPLTU") == 0)
+    mnemonic = CMPLTU;
+  else if (strcmp(token, "CMPLEU") == 0)
+    mnemonic = CMPLEU;
   
   // 2-R type
   else if (strcmp(token, "ADDI") == 0)
@@ -55,8 +68,76 @@ enum MNEMONIC token_to_mnemonic(char *token) {
   return mnemonic;
 }
 
+uint8_t mnemonic_to_code(enum MNEMONIC mnemonic_token) {
+  uint8_t decimal_code;
+  if (mnemonic_token >= AND && mnemonic_token <= SHL)
+    decimal_code = 0;
+  else if (mnemonic_token >= CMPLT && mnemonic_token <= CMPLEU)
+    decimal_code = 1;
+  else if (mnemonic_token >= ADDI && mnemonic_token <= JALR)
+    decimal_code = (int)mnemonic_token - 11;
+  else if (mnemonic_token == BZ || mnemonic_token == BNZ)
+    decimal_code = 8;
+  else if (mnemonic_token == MOVI || mnemonic_token == MOVHI) 
+    decimal_code = 9;
+  else if (mnemonic_token == IN || mnemonic_token == OUT) 
+    decimal_code = 10;
+  return decimal_code;
+}
 
-void parse_mnemonic(char *mnemonic) {
+void convert_type_3(uint8_t decimal_code, enum MNEMONIC token, int rd, int ra, int rb, uint8_t *complete_code) {
+  uint8_t rd_binary[3] = {0}, ra_binary[3]  = {0}, rb_binary[3] = {0};
+  decimal_to_base(rd, 2, &rd_binary);
+  decimal_to_base(ra, 2, &ra_binary);
+  decimal_to_base(rb, 2, &rb_binary);
+
+  uint8_t code_binary[4] = {0};
+  decimal_to_base(decimal_code, 2, &code_binary);
+
+  uint8_t specific_code_binary[3] = {0};
+  decimal_to_base((int)token%8, 2, &specific_code_binary);
+
+  // Copy code
+  for (int i = 3; i >= 0; --i)
+    complete_code[15-(3-i)] = code_binary[i];
+  // Copy registers
+  for (int i = 11; i >= 3; --i) {
+    printf("%d %d %d\n", 11-i, 8-i, 5-i);
+    if (i <= 11 && i >= 9) complete_code[i] = ra_binary[2-(11-i)];
+    else if (i <= 8 && i >= 6) complete_code[i] = rb_binary[2-(8-i)];
+    else complete_code[i] = rd_binary[2-(5-i)];
+  }
+  // Copy specific operation code
+  for (int i = 2; i >= 0; --i)
+    complete_code[i] = specific_code_binary[i];
+
+}
+  
+void parse_options(enum MNEMONIC token, char *options, uint8_t *complete_code) {
+  if (token >= AND && token <= CMPLEU) {
+    // Type 3-R
+    char *register_d = strtok(options, ",");
+    char *register_a = strtok(NULL, ",");
+    char *register_b = strtok(NULL, ",");
+
+    if (register_d == NULL || register_a == NULL || register_b == NULL) {
+      // printf("'%s' is not formatted properly. Format should be: Rd,Ra,Rb\n", options);
+      exit(-1);
+    }
+
+    int rd = (int)register_d[1] - (int)'0';
+    int ra = (int)register_a[1] - (int)'0';
+    int rb = (int)register_b[1] - (int)'0';
+
+    convert_type_3(mnemonic_to_code(token), token, rd, ra, rb, complete_code);
+  } else if (token >= ADDI && token <= JALR) {
+    // Type 2-R
+  } else {
+    // Type 1-R
+  }
+}
+
+void parse_mnemonic(char *mnemonic, uint8_t *complete_code) {
   char *token = strtok(mnemonic, " ");
   char *options = strtok(NULL, " "); 
   
@@ -67,5 +148,9 @@ void parse_mnemonic(char *mnemonic) {
     printf("'%s' is not a recognized SISA command\n", token);
     exit(-1);
   }
-  printf("%d %s", mnemonic_token, options);
+
+  uint8_t decimal_code = mnemonic_to_code(mnemonic_token);
+  parse_options(mnemonic_token, options, complete_code);
+
 }
+

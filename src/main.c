@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <string.h>
 
 #include "parser.h"
 #include "environment.h"
@@ -16,19 +17,27 @@ int main(int argc, char **argv) {
   env.memory = (uint8_t*)malloc(mem_size);
   env.PC = 0;
   env.data_offset = 0;
-
-  uint16_t b = 0x0152;
-  add_instruction(b, &env);
   
-  /*
   FILE *fp;
   fp = fopen(argv[1], "r");
 
   char buff[255];
   while (fgets(buff, 255, fp)) {
-    parse_mnemonic(buff);
+    // TODO: Create separate function to trim in utils
+    int size = strlen(buff);
+    while (buff[size-1] == '\n' || buff[size-1] == ' ') {
+      buff[size-1] = 0;
+      --size;
+    }
+
+    uint8_t complete_code[16] = {0};
+    parse_mnemonic(buff, &complete_code);
+    
+    for (int i = 15; i >= 0; --i)
+      printf("%d", complete_code[i]);
+    printf("\n");
+
   }
-  */
 
   free(env.memory);
 }

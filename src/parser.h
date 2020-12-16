@@ -1,12 +1,14 @@
 #ifndef PARSER_H
 #define PARSER_H
 
+#include <stdint.h>
+
 enum MNEMONIC {
   // 0 - 12: 3-R type
   AND, OR, XOR, NOT,
   ADD, SUB, SHA, SHL,
-  CMPLT, CMPLE, CMPLEQ, 
-  CMPLTU, CMPLEU,
+  CMPLT, CMPLE, EMPTY_1, CMPEQ, 
+  CMPLTU, CMPLEU, EMPTY_2, EMPTY_3,
 
   // 13 - 18: 2-R type
   ADDI,
@@ -28,6 +30,6 @@ enum MNEMONIC {
   NOT_EXISTS
 };
 
-void parse_mnemonic(char *mnemonic);
+void parse_mnemonic(char *mnemonic, uint8_t *complete_code);
 
 #endif

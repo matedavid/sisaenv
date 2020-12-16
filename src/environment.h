@@ -2,6 +2,7 @@
 #define ENVIRONMENT_H
 
 #include <stdint.h>
+#include "utils.h"
 
 struct Environment {
   uint8_t *memory;
