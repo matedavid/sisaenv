@@ -15,7 +15,7 @@ int main(int argc, char **argv) {
   struct Environment env;
   int mem_size = 1000;
   env.memory = (uint8_t*)malloc(mem_size);
-  env.registers = (uint16_t*)malloc(7);
+  env.registers = (uint16_t*)malloc(7); // 7 registers
   env.PC = 0;
   env.data_offset = 0;
   
@@ -32,9 +32,14 @@ int main(int argc, char **argv) {
     }
 
     uint8_t complete_code[16] = {0};
-    parse_mnemonic(buff, &complete_code);
+    parse_instruction(buff, &complete_code);
 
     add_instruction(&complete_code, &env);
+  }
+  
+  while (env.PC != env.data_offset) {
+    execute_instruction(&env);
+    env.PC += 2;
   }
 
   free(env.memory);

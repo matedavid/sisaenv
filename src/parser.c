@@ -175,14 +175,17 @@ void parse_options(enum MNEMONIC token, char *options, uint8_t *complete_code) {
     char *register_a = strtok(NULL, ",");
     char *register_b = strtok(NULL, ",");
 
-    if (register_d == NULL || register_a == NULL || register_b == NULL) {
+
+    if (register_d == NULL || register_a == NULL || (register_b == NULL && token != NOT)) {
       // printf("'%s' is not formatted properly. Format should be: Rd,Ra,Rb\n", options);
       exit(-1);
     }
 
     int rd = (int)register_d[1] - (int)'0';
     int ra = (int)register_a[1] - (int)'0';
-    int rb = (int)register_b[1] - (int)'0';
+    int rb;
+    if (token != NOT) rb = (int)register_b[1] - (int)'0';
+    else rb = 0;
 
     convert_type_3(mnemonic_to_code(token), token, rd, ra, rb, complete_code);
   } else if (token >= ADDI && token <= JALR) {
@@ -227,7 +230,7 @@ void parse_options(enum MNEMONIC token, char *options, uint8_t *complete_code) {
   }
 }
 
-void parse_mnemonic(char *mnemonic, uint8_t *complete_code) {
+void parse_instruction(char *mnemonic, uint8_t *complete_code) {
   char *token = strtok(mnemonic, " ");
   char *options = strtok(NULL, " "); 
   

@@ -17,6 +17,13 @@ TODO:
   - [ ] MOVI / MOVHI instructions
   - [ ] IN / OUT instructions
 
+
+How to organize code:
+* In main function <-- while (PC != data_offset) execute(PC); PC += 2;
+* Execute --> in environment.c = unparses instruction + calls specific function
+* Specific functions --> instructions.c file = contains logic of every instruction
+
+
 PIPELINE:
 1. Create MEMORY (RAM) and enviroment 
 2. Read file and parse instructions, convert them to binary 
