@@ -24,22 +24,17 @@ int main(int argc, char **argv) {
 
   char buff[255];
   while (fgets(buff, 255, fp)) {
-    // TODO: Create separate function to trim in utils
+    // TODO: Create separate function to trim / sanitize input on utils file
     int size = strlen(buff);
     while (buff[size-1] == '\n' || buff[size-1] == ' ') {
       buff[size-1] = 0;
       --size;
     }
 
-    printf("%s: ", buff);
-
     uint8_t complete_code[16] = {0};
     parse_mnemonic(buff, &complete_code);
-  
-    for (int i = 15; i >= 0; --i)
-      printf("%d", complete_code[i]);
-    printf("\n");
 
+    add_instruction(&complete_code, &env);
   }
 
   free(env.memory);

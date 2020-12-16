@@ -11,6 +11,6 @@ struct Environment {
   uint16_t *registers;
 };
 
-void add_instruction(uint16_t command, struct Environment *env);
+void add_instruction(uint8_t *parsed_instruction, struct Environment *env);
 
 #endif

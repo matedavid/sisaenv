@@ -6,8 +6,8 @@ Environment to run SISA programs, on both Harvard and Von Neumann machines / arc
 TODO: 
 - [x] Parse inputs => separate mnemonic from registers, constants...
 - [x] Create register system
-- [ ] Create conversion to bytes for the three types of instructions
-- [ ] Create RAM system (add already-parsed instructions to RAM, basically)
+- [x] Create conversion to bytes for the three types of instructions
+- [x] Create RAM system (add already-parsed instructions to RAM, basically)
 - [ ] Create unparsing functionality (2 byte parsed instruction -> something understandable for execution)
 - [ ] Lay down functionality for each mnemonic
   - [ ] A/L + ADDI
