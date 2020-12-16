@@ -15,6 +15,7 @@ int main(int argc, char **argv) {
   struct Environment env;
   int mem_size = 1000;
   env.memory = (uint8_t*)malloc(mem_size);
+  env.registers = (uint16_t*)malloc(7);
   env.PC = 0;
   env.data_offset = 0;
   
@@ -40,4 +41,5 @@ int main(int argc, char **argv) {
   }
 
   free(env.memory);
+  free(env.registers);
 }

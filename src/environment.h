@@ -8,6 +8,7 @@ struct Environment {
   uint8_t *memory;
   unsigned int PC;
   unsigned int data_offset;
+  uint16_t *registers;
 };
 
 void add_instruction(uint16_t command, struct Environment *env);
