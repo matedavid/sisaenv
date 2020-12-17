@@ -144,6 +144,38 @@ void STB_f(int ra, int rother, int N6, struct Environment *env) {
 
 /* JALR */
 
-void JALR_f(int ra, int rother, struct Environment *env) { }
+void JALR_f(int ra, int rother, struct Environment *env) {
 
+}
+
+/* BZ / BNZ */
+
+void BZ_f(int reg, int N8, struct Environment *env) {
+
+}
+
+void BNZ_f(int reg, int N8, struct Environment *env) {
+
+}
+
+/* MOVI / MOVHI */
+
+void MOVI_f(int reg, int N8, struct Environment *env) {
+  env->registers[reg] = N8;
+}
+
+void MOVHI_f(int reg, int N8, struct Environment *env) {
+
+}
+
+/* IN / OUT */
+
+void IN_f(int reg, int N8, struct Environment *env) {
+
+}
+
+void OUT_f(int reg, int N8, struct Environment *env) {
+  int val = env->registers[reg];
+  printf("OUT: %d\n", val);
+}
 

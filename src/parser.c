@@ -214,10 +214,11 @@ void parse_options(enum MNEMONIC token, char *options, uint8_t *complete_code) {
     char *reg;
     int N8, e;
     
-    if (token == IN || token == OUT) {
+    if (token == OUT) {
       N8 = atoi(strtok(options, ","));
       reg = strtok(NULL, ",");
-    } else {
+    } 
+    else {
       reg = strtok(options, ",");
       N8 = atoi(strtok(NULL, ","));
     }

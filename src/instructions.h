@@ -33,4 +33,16 @@ void STB_f(int ra, int rother, int N6, struct Environment *env);
 // JALR
 void JALR_f(int ra, int rother, struct Environment *env);
 
+// Jump instructions
+void BZ_f(int reg, int N8, struct Environment *env);
+void BNZ_f(int reg, int N8, struct Environment *env);
+
+// Move instructions
+void MOVI_f(int reg, int N8, struct Environment *env);
+void MOVHI_f(int reg, int N8, struct Environment *env);
+
+// IO instructions
+void IN_f(int reg, int N8, struct Environment *env);
+void OUT_f(int reg, int N8, struct Environment *env);
+
 #endif

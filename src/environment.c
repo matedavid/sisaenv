@@ -38,11 +38,11 @@ void execute_instruction(struct Environment *env) {
   uint8_t instruction_code[4] = {0};
   for (int i = 3; i >= 0; --i)
     instruction_code[i] = byte_high[i+4];
-  
-  uint8_t decimal_instruction_code = base_to_decimal(&instruction_code, 4, 2);
 
-  if (decimal_instruction_code > 1) decimal_instruction_code += 14;
+  int decimal_instruction_code = base_to_decimal(&instruction_code, 4, 2);
+  // if (decimal_instruction_code > 1) decimal_instruction_code += 14;
 
+  // TODO: Create different functions for each type
   if (decimal_instruction_code == 0 || decimal_instruction_code == 1) {
     uint8_t ra_binary[3] = {0}, rb_binary[3] = {0}, rd_binary[3] = {0}, specific_code[3] = {0};
     for (int i = 11; i >= 0; --i) {
@@ -109,11 +109,11 @@ void execute_instruction(struct Environment *env) {
         
     }
 
-  } else if (decimal_instruction_code >= ADDI && decimal_instruction_code <= JALR) {
+  } else if (decimal_instruction_code >= 3 && decimal_instruction_code <= 7) {
 
     uint8_t ra_binary[3] = {0}, other_r_binary[3] = {0}, N6_binary[6] = {0};
     for (int i = 11; i >= 0; --i) {
-      if (i <= 11 && i >= 9) ra_binary[i-9] = complete_code[i];
+      if (i >= 9) ra_binary[i-9] = complete_code[i];
       else if (i <= 8 && i >= 6 && decimal_instruction_code != NOT) other_r_binary[i-6] = complete_code[i];
       else N6_binary[i] = complete_code[i];
     }
@@ -146,5 +146,28 @@ void execute_instruction(struct Environment *env) {
         exit(-1);
         break;
     }
-  }   
+  } else {
+    uint8_t reg_binary[3] = {0}, N8_binary[8] = {0};
+    uint8_t e_constant;
+    for (int i = 11; i >= 0; --i) {
+      if (i >= 9) reg_binary[i-9] = complete_code[i];
+      else if (i == 8) e_constant = complete_code[i];
+      else N8_binary[i] = complete_code[i];
+    }
+
+    int reg = base_to_decimal(reg_binary, 3, 2);
+    int N8 = base_to_decimal(N8_binary, 8, 2);
+
+    if (decimal_instruction_code == 8) {
+      if (e_constant == 0) BZ_f(reg, N8, env);
+      else BNZ_f(reg, N8, env);
+    } else if (decimal_instruction_code == 9) {
+      if (e_constant == 0) MOVI_f(reg, N8, env);
+      else MOVHI_f(reg, N8, env);
+    } else if (decimal_instruction_code == 10) {
+      if (e_constant == 0) IN_f(reg, N8, env);
+      else OUT_f(reg, N8, env);
+    }
+  }
+
 }
