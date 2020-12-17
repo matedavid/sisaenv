@@ -40,6 +40,7 @@ void execute_instruction(struct Environment *env) {
     instruction_code[i] = byte_high[i+4];
   
   uint8_t decimal_instruction_code = base_to_decimal(&instruction_code, 4, 2);
+
   if (decimal_instruction_code == 0 || decimal_instruction_code == 1) {
     uint8_t ra_binary[3] = {0}, rb_binary[3] = {0}, rd_binary[3] = {0}, specific_code[3] = {0};
     for (int i = 11; i >= 0; --i) {
@@ -56,33 +57,48 @@ void execute_instruction(struct Environment *env) {
     if (decimal_instruction_code != NOT) rb = base_to_decimal(rb_binary, 3, 2);
     else rb = 0;
 
-    printf("%d\n", specific_code_decimal);
-
     int token = 8*decimal_instruction_code + specific_code_decimal;
     switch (token) {
+      // A/L instructions
       case AND:
-        AND_f(rd, ra, rb);
+        AND_f(rd, ra, rb, env);
         break;
       case OR:
-        OR_f(rd, ra, rb);
+        OR_f(rd, ra, rb, env);
         break;
       case XOR:
-        XOR_f(rd, ra, rb);
+        XOR_f(rd, ra, rb, env);
         break;
       case NOT:
-        NOT_f(rd, ra);
+        NOT_f(rd, ra, env);
         break;
       case ADD:
-        ADD_f(rd, ra, rb);
+        ADD_f(rd, ra, rb, env);
         break;
       case SUB:
-        SUB_f(rd, ra, rb);
+        SUB_f(rd, ra, rb, env);
         break;
       case SHA:
-        SHA_f(rd, ra, rb);
+        SHA_f(rd, ra, rb, env);
         break;
       case SHL:
-        SHL_f(rd, ra, rb);
+        SHL_f(rd, ra, rb, env);
+        break;
+      // Cmp instructions
+      case CMPLT:
+        CMPLT_f(rd, ra, rb, env);
+        break;
+      case CMPLE:
+        CMPLE_f(rd, ra, rb, env);
+        break;
+      case CMPEQ:
+        CMPEQ_f(rd, ra, rb, env);
+        break;
+      case CMPLTU:
+        CMPLTU_f(rd, ra, rb, env);
+        break;
+      case CMPLEU:
+        CMPLEU_f(rd, ra, rb, env);
         break;
       default:
         printf("Something wrong happened when unparsing instruction\n");
@@ -91,6 +107,42 @@ void execute_instruction(struct Environment *env) {
         
     }
 
-  }
+  } else if (decimal_instruction_code >= ADDI && decimal_instruction_code <= JALR) {
 
+    uint8_t ra_binary[3] = {0}, other_r_binary[3] = {0}, N6_binary[6] = {0};
+    for (int i = 11; i >= 0; --i) {
+      if (i <= 11 && i >= 9) ra_binary[i-9] = complete_code[i];
+      else if (i <= 8 && i >= 6 && decimal_instruction_code != NOT) other_r_binary[i-6] = complete_code[i];
+      else N6_binary[i] = complete_code[i];
+    }
+    
+    int ra = base_to_decimal(ra_binary, 3, 2);
+    int other_r = base_to_decimal(other_r_binary, 3, 2);
+    int N6 = base_to_decimal(N6_binary, 6, 2);
+    
+    switch (decimal_instruction_code) {
+      case ADDI:
+        ADDI_f(ra, other_r, N6, env);
+        break;
+      case LD:
+        LD_f(ra, other_r, N6, env);
+        break;
+      case ST:
+        ST_f(ra, other_r, N6, env);
+        break;
+      case LDB:
+        LDB_f(ra, other_r, N6, env);
+        break;
+      case STB:
+        STB_f(ra, other_r, N6, env);
+        break;
+      case JALR:
+        JALR_f(ra, other_r, env);
+        break;
+      default:
+        printf("Somethinig wrong happened when unparsing instruction\n");
+        exit(-1);
+        break;
+    }
+  }   
 }

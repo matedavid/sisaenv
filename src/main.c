@@ -18,7 +18,7 @@ int main(int argc, char **argv) {
   env.registers = (uint16_t*)malloc(7); // 7 registers
   env.PC = 0;
   env.data_offset = 0;
-  
+
   FILE *fp;
   fp = fopen(argv[1], "r");
 
