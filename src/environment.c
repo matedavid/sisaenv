@@ -41,6 +41,8 @@ void execute_instruction(struct Environment *env) {
   
   uint8_t decimal_instruction_code = base_to_decimal(&instruction_code, 4, 2);
 
+  if (decimal_instruction_code > 1) decimal_instruction_code += 14;
+
   if (decimal_instruction_code == 0 || decimal_instruction_code == 1) {
     uint8_t ra_binary[3] = {0}, rb_binary[3] = {0}, rd_binary[3] = {0}, specific_code[3] = {0};
     for (int i = 11; i >= 0; --i) {
@@ -119,7 +121,7 @@ void execute_instruction(struct Environment *env) {
     int ra = base_to_decimal(ra_binary, 3, 2);
     int other_r = base_to_decimal(other_r_binary, 3, 2);
     int N6 = base_to_decimal(N6_binary, 6, 2);
-    
+
     switch (decimal_instruction_code) {
       case ADDI:
         ADDI_f(ra, other_r, N6, env);

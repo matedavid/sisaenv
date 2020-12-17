@@ -15,9 +15,9 @@ void decimal_to_base(uint16_t number, int base, uint8_t *binary) {
 }
 
 // Convert base to decimal
-uint8_t base_to_decimal(uint8_t *content, int size, int base) {
-  uint8_t decimal = 0;
+int base_to_decimal(uint8_t *content, int size, int base) {
+  int decimal = 0;
   for (int i = 0; i < size; ++i)
-    decimal += ( content[i] * (uint8_t)pow(base, i) );
+    decimal += ( content[i] * pow(base, i) );
   return decimal;
 }
