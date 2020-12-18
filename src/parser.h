@@ -30,6 +30,6 @@ enum MNEMONIC {
   NOT_EXISTS
 };
 
-void parse_instruction(char *mnemonic, uint8_t *complete_code);
+void parse_instruction(char *mnemonic, int *complete_code);
 
 #endif

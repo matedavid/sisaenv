@@ -5,6 +5,7 @@
 
 #include "parser.h"
 #include "environment.h"
+#include "utils.h"
 
 int main(int argc, char **argv) {
   if (argc <= 1) {
@@ -15,10 +16,10 @@ int main(int argc, char **argv) {
   struct Environment env;
   int mem_size = 1000;
 
-  env.memory = (uint8_t*)malloc(mem_size);
+  env.memory = (int*)malloc(mem_size);
   memset(env.memory, 0, mem_size);
 
-  env.registers = (uint16_t*)malloc(7); // 7 registers
+  env.registers = (int*)malloc(7); // 7 registers
   memset(env.registers, 0, 7);
 
   env.PC = 0;
@@ -36,7 +37,7 @@ int main(int argc, char **argv) {
       --size;
     }
 
-    uint8_t complete_code[16] = {0};
+    int complete_code[16] = {0};
     parse_instruction(buff, &complete_code);
 
     add_instruction(&complete_code, &env);

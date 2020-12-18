@@ -8,49 +8,49 @@
 /* A/L Instructions */
 
 void AND_f(int rd, int ra, int rb, struct Environment *env) {
-  uint16_t value_ra = env->registers[ra];
-  uint16_t value_rb = env->registers[rb];
+  int value_ra = env->registers[ra];
+  int value_rb = env->registers[rb];
 
-  uint16_t res = value_ra&value_rb;
+  int res = value_ra&value_rb;
   env->registers[rd] = res;
 }
 
 void OR_f(int rd, int ra, int rb, struct Environment *env) {
-  uint16_t value_ra = env->registers[ra];
-  uint16_t value_rb = env->registers[rb];
+  int value_ra = env->registers[ra];
+  int value_rb = env->registers[rb];
 
-  uint16_t res = value_ra|value_rb;
+  int res = value_ra|value_rb;
   env->registers[rd] = res;
 }
 
 void XOR_f(int rd, int ra, int rb, struct Environment *env) {
-  uint16_t value_ra = env->registers[ra];
-  uint16_t value_rb = env->registers[rb];
+  int value_ra = env->registers[ra];
+  int value_rb = env->registers[rb];
 
-  uint16_t res = value_ra^value_rb;
+  int res = value_ra^value_rb;
   env->registers[rd] = res;
 }
 
 void NOT_f(int rd, int ra, struct Environment *env) {
-  uint16_t value_ra = env->registers[ra];
+  int value_ra = env->registers[ra];
 
-  uint16_t res = ~value_ra;
+  int res = ~value_ra;
   env->registers[rd] = res;
 }
 
 void ADD_f(int rd, int ra, int rb, struct Environment *env) {
-  uint16_t value_ra = env->registers[ra];
-  uint16_t value_rb = env->registers[rb];
+  int value_ra = env->registers[ra];
+  int value_rb = env->registers[rb];
 
-  uint16_t res = value_ra + value_rb;
+  int res = value_ra + value_rb;
   env->registers[rd] = res;
 }
 
 void SUB_f(int rd, int ra, int rb, struct Environment *env) {
-  uint16_t value_ra = env->registers[ra];
-  uint16_t value_rb = env->registers[rb];
+  int value_ra = env->registers[ra];
+  int value_rb = env->registers[rb];
 
-  uint16_t res = value_ra - value_rb;
+  int res = value_ra - value_rb;
   env->registers[rd] = res;
 }
 
@@ -59,10 +59,10 @@ void SHA_f(int rd, int ra, int rb, struct Environment *env) {
 }
 
 void SHL_f(int rd, int ra, int rb, struct Environment *env) {
-  uint16_t value_ra = env->registers[ra];
-  uint16_t value_rb = env->registers[rb];
+  int value_ra = env->registers[ra];
+  int value_rb = env->registers[rb];
   
-  uint16_t res;
+  int res;
   if (value_rb >= 0) {
     res = value_ra << value_rb;
   } else {
@@ -83,35 +83,35 @@ void CMPLE_f(int rd, int ra, int rb, struct Environment *env) {
 }
 
 void CMPEQ_f(int rd, int ra, int rb, struct Environment *env) {
-  uint16_t value_ra = env->registers[ra];
-  uint16_t value_rb = env->registers[rb];
+  int value_ra = env->registers[ra];
+  int value_rb = env->registers[rb];
 
-  uint16_t res = value_ra == value_rb;
+  int res = value_ra == value_rb;
   env->registers[rd] = res;
 }
 
 void CMPLTU_f(int rd, int ra, int rb, struct Environment *env) {
-  uint16_t value_ra = env->registers[ra];
-  uint16_t value_rb = env->registers[rb];
+  int value_ra = env->registers[ra];
+  int value_rb = env->registers[rb];
 
-  uint16_t res = value_ra < value_rb;
+  int res = value_ra < value_rb;
   env->registers[rd] = res;
 }
 
 void CMPLEU_f(int rd, int ra, int rb, struct Environment *env) {
-  uint16_t value_ra = env->registers[ra];
-  uint16_t value_rb = env->registers[rb];
+  int value_ra = env->registers[ra];
+  int value_rb = env->registers[rb];
 
-  uint16_t res = value_ra <= value_rb;
+  int res = value_ra <= value_rb;
   env->registers[rd] = res;
 }
 
 /* ADDI */
 
 void ADDI_f(int ra, int rother, int N6, struct Environment *env) { 
-  uint16_t value_ra = env->registers[ra];
+  int value_ra = env->registers[ra];
 
-  uint16_t res = value_ra + N6;
+  int res = value_ra + N6;
   env->registers[rother] = res;
 } 
 
@@ -192,13 +192,13 @@ void JALR_f(int ra, int rother, struct Environment *env) {
 /* BZ / BNZ */
 
 void BZ_f(int reg, int N8, struct Environment *env) {
-  uint16_t value_reg = env->registers[reg];
+  int value_reg = env->registers[reg];
   if (value_reg == 0)
     env->PC += N8*2;
 }
 
 void BNZ_f(int reg, int N8, struct Environment *env) {
-  uint16_t value_reg = env->registers[reg];
+  int value_reg = env->registers[reg];
   if (value_reg != 0)
     env->PC += N8*2;
 }
@@ -210,14 +210,14 @@ void MOVI_f(int reg, int N8, struct Environment *env) {
 }
 
 void MOVHI_f(int reg, int N8, struct Environment *env) {
-
+   
 }
 
 /* IN / OUT */
 
 void IN_f(int reg, int N8, struct Environment *env) {
   printf("IN: ");
-  uint16_t input;
+  int input;
   scanf("%hd", &input);
   
   env->registers[reg] = input;

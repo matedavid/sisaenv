@@ -70,8 +70,8 @@ enum MNEMONIC token_to_mnemonic(char *token) {
   return mnemonic;
 }
 
-uint8_t mnemonic_to_code(enum MNEMONIC mnemonic_token) {
-  uint8_t decimal_code;
+int mnemonic_to_code(enum MNEMONIC mnemonic_token) {
+  int decimal_code;
   if (mnemonic_token >= AND && mnemonic_token <= SHL)
     decimal_code = 0;
   else if (mnemonic_token >= CMPLT && mnemonic_token <= CMPLEU)
@@ -87,16 +87,16 @@ uint8_t mnemonic_to_code(enum MNEMONIC mnemonic_token) {
   return decimal_code;
 }
 
-void convert_type_3(uint8_t decimal_code, enum MNEMONIC token, int rd, int ra, int rb, uint8_t *complete_code) {
-  uint8_t rd_binary[3] = {0}, ra_binary[3]  = {0}, rb_binary[3] = {0};
+void convert_type_3(int decimal_code, enum MNEMONIC token, int rd, int ra, int rb, int *complete_code) {
+  int rd_binary[3] = {0}, ra_binary[3]  = {0}, rb_binary[3] = {0};
   decimal_to_base(rd, 2, &rd_binary);
   decimal_to_base(ra, 2, &ra_binary);
   decimal_to_base(rb, 2, &rb_binary);
 
-  uint8_t code_binary[4] = {0};
+  int code_binary[4] = {0};
   decimal_to_base(decimal_code, 2, &code_binary);
 
-  uint8_t specific_code_binary[3] = {0};
+  int specific_code_binary[3] = {0};
   decimal_to_base((int)token%8, 2, &specific_code_binary);
 
   // Copy code
@@ -114,8 +114,8 @@ void convert_type_3(uint8_t decimal_code, enum MNEMONIC token, int rd, int ra, i
 
 }
 
-void convert_type_2(uint8_t decimal_code, int ra, int rother, int N6, uint8_t *complete_code) {
-  uint8_t ra_binary[3] = {0}, rother_binary[3] = {0}, N6_binary[6] = {0};
+void convert_type_2(int decimal_code, int ra, int rother, int N6, int *complete_code) {
+  int ra_binary[3] = {0}, rother_binary[3] = {0}, N6_binary[6] = {0};
   decimal_to_base(ra, 2, &ra_binary);
   decimal_to_base(rother, 2, &rother_binary);
   
@@ -126,7 +126,7 @@ void convert_type_2(uint8_t decimal_code, int ra, int rother, int N6, uint8_t *c
   }
   decimal_to_base(N6, 2, &N6_binary);
   
-  uint8_t code_binary[4] = {0};
+  int code_binary[4] = {0};
   decimal_to_base(decimal_code, 2, &code_binary);
   
   // Copy code
@@ -142,8 +142,8 @@ void convert_type_2(uint8_t decimal_code, int ra, int rother, int N6, uint8_t *c
     complete_code[i] = N6_binary[i];
 }
 
-void convert_type_1(uint8_t decimal_code, int reg, int e, int N8, uint8_t *complete_code) {
-  uint8_t reg_binary[3] = {0}, N8_binary[8] = {0};
+void convert_type_1(int decimal_code, int reg, int e, int N8, int *complete_code) {
+  int reg_binary[3] = {0}, N8_binary[8] = {0};
   decimal_to_base(reg, 2, &reg_binary);
   
   // TODO: Add support for negative -> binary conversion
@@ -153,8 +153,9 @@ void convert_type_1(uint8_t decimal_code, int reg, int e, int N8, uint8_t *compl
   }
   decimal_to_base(N8, 2, &N8_binary);
   
-  uint8_t code_binary[4] = {0};
+  int code_binary[4] = {0};
   decimal_to_base(decimal_code, 2, &code_binary);
+
   // Copy code
   for (int i = 3; i >= 0; --i)
     complete_code[15-(3-i)] = code_binary[i];
@@ -168,7 +169,7 @@ void convert_type_1(uint8_t decimal_code, int reg, int e, int N8, uint8_t *compl
     complete_code[i] = N8_binary[i];
 }
 
-void parse_options(enum MNEMONIC token, char *options, uint8_t *complete_code) {
+void parse_options(enum MNEMONIC token, char *options, int *complete_code) {
   if (token >= AND && token <= CMPLEU) {
     // Type 3-R
     char *register_d = strtok(options, ",");
@@ -231,19 +232,18 @@ void parse_options(enum MNEMONIC token, char *options, uint8_t *complete_code) {
   }
 }
 
-void parse_instruction(char *mnemonic, uint8_t *complete_code) {
+void parse_instruction(char *mnemonic, int *complete_code) {
   char *token = strtok(mnemonic, " ");
   char *options = strtok(NULL, " "); 
   
   enum MNEMONIC mnemonic_token = token_to_mnemonic(token);
-  
+ 
   // Check if mnemonic is defined in SISA
   if (mnemonic_token == NOT_EXISTS) {
     printf("'%s' is not a recognized SISA command\n", token);
     exit(-1);
   }
 
-  uint8_t decimal_code = mnemonic_to_code(mnemonic_token);
   parse_options(mnemonic_token, options, complete_code);
 }
 

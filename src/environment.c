@@ -7,44 +7,47 @@
 
 #include "instructions.h"
 
-void add_instruction(uint8_t *parsed_instruction, struct Environment *env) {
-  uint8_t low_byte[8] = {0};
-  uint8_t high_byte[8] = {0};
-  memcpy(&low_byte, parsed_instruction, 8);
-  memcpy(&high_byte, parsed_instruction+8, 8);
+void add_instruction(int *parsed_instruction, struct Environment *env) {
+  int low_byte[8] = {0};
+  int high_byte[8] = {0};
 
-  uint8_t decimal_low_byte = base_to_decimal(&low_byte, 8, 2);
-  uint8_t decimal_high_byte = base_to_decimal(&high_byte, 8, 2);
+  for (int i = 15; i >= 0; --i) {
+    if (i >= 8) high_byte[i-8] = parsed_instruction[i];
+    else low_byte[i] = parsed_instruction[i];
+  }
 
+  int decimal_low_byte = base_to_decimal(&low_byte, 8, 2);
+  int decimal_high_byte = base_to_decimal(&high_byte, 8, 2);
+  
   env->memory[env->data_offset] = decimal_low_byte;
   env->memory[env->data_offset+1] = decimal_high_byte;
+
   env->data_offset += 2;
 }
 
 void execute_instruction(struct Environment *env) {
-  uint8_t decimal_byte_low = env->memory[env->PC];
-  uint8_t decimal_byte_high = env->memory[env->PC+1];
+  int decimal_byte_low = env->memory[env->PC];
+  int decimal_byte_high = env->memory[env->PC+1];
 
-  uint8_t byte_low[8] = {0}, byte_high[8] = {0};
+  int byte_low[8] = {0}, byte_high[8] = {0};
   decimal_to_base(decimal_byte_low, 2, &byte_low);
   decimal_to_base(decimal_byte_high, 2, &byte_high);
 
-  uint8_t complete_code[16] = {0};
+  int complete_code[16] = {0};
   for (int i = 15; i >= 0; --i) {
     if (i >= 8) complete_code[i] = byte_high[i-8];
     else complete_code[i] = byte_low[i];
   }
   
-  uint8_t instruction_code[4] = {0};
+  int instruction_code[4] = {0};
   for (int i = 3; i >= 0; --i)
     instruction_code[i] = byte_high[i+4];
 
   int decimal_instruction_code = base_to_decimal(&instruction_code, 4, 2);
-  // if (decimal_instruction_code > 1) decimal_instruction_code += 14;
 
   // TODO: Create different functions for each type
   if (decimal_instruction_code == 0 || decimal_instruction_code == 1) {
-    uint8_t ra_binary[3] = {0}, rb_binary[3] = {0}, rd_binary[3] = {0}, specific_code[3] = {0};
+    int ra_binary[3] = {0}, rb_binary[3] = {0}, rd_binary[3] = {0}, specific_code[3] = {0};
     for (int i = 11; i >= 0; --i) {
       if (i <= 11 && i >= 9) ra_binary[i-9] = complete_code[i];
       else if (i <= 8 && i >= 6 && decimal_instruction_code != NOT) rb_binary[i-6] = complete_code[i];
@@ -111,7 +114,7 @@ void execute_instruction(struct Environment *env) {
 
   } else if (decimal_instruction_code >= 3 && decimal_instruction_code <= 7) {
 
-    uint8_t ra_binary[3] = {0}, other_r_binary[3] = {0}, N6_binary[6] = {0};
+    int ra_binary[3] = {0}, other_r_binary[3] = {0}, N6_binary[6] = {0};
     for (int i = 11; i >= 0; --i) {
       if (i >= 9) ra_binary[i-9] = complete_code[i];
       else if (i <= 8 && i >= 6 && decimal_instruction_code != NOT) other_r_binary[i-6] = complete_code[i];
@@ -147,8 +150,8 @@ void execute_instruction(struct Environment *env) {
         break;
     }
   } else {
-    uint8_t reg_binary[3] = {0}, N8_binary[8] = {0};
-    uint8_t e_constant;
+    int reg_binary[3] = {0}, N8_binary[8] = {0};
+    int e_constant;
     for (int i = 11; i >= 0; --i) {
       if (i >= 9) reg_binary[i-9] = complete_code[i];
       else if (i == 8) e_constant = complete_code[i];

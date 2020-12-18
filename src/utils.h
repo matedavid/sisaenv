@@ -3,7 +3,9 @@
 
 #include <stdint.h>
 
-void decimal_to_base(uint16_t number, int base, uint8_t *binary);
-int base_to_decimal(uint8_t *content, int size, int base);
+void decimal_to_base(int number, int base, int *binary);
+int base_to_decimal(int *content, int size, int base);
+
+void print_binary(int *binary, int size);
 
 #endif
