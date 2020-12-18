@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <math.h>
 
+#include "utils.h"
+
 /* A/L Instructions */
 
 void AND_f(int rd, int ra, int rb, struct Environment *env) {
@@ -57,7 +59,17 @@ void SHA_f(int rd, int ra, int rb, struct Environment *env) {
 }
 
 void SHL_f(int rd, int ra, int rb, struct Environment *env) {
-  printf("'SHL' not implemented\n");
+  uint16_t value_ra = env->registers[ra];
+  uint16_t value_rb = env->registers[rb];
+  
+  uint16_t res;
+  if (value_rb >= 0) {
+    res = value_ra << value_rb;
+  } else {
+    res = value_ra >> -value_rb;
+  }
+
+  env->registers[rd] = res;
 }
 
 /* CMP Instructions */
@@ -71,15 +83,27 @@ void CMPLE_f(int rd, int ra, int rb, struct Environment *env) {
 }
 
 void CMPEQ_f(int rd, int ra, int rb, struct Environment *env) {
+  uint16_t value_ra = env->registers[ra];
+  uint16_t value_rb = env->registers[rb];
 
+  uint16_t res = value_ra == value_rb;
+  env->registers[rd] = res;
 }
 
 void CMPLTU_f(int rd, int ra, int rb, struct Environment *env) {
+  uint16_t value_ra = env->registers[ra];
+  uint16_t value_rb = env->registers[rb];
 
+  uint16_t res = value_ra < value_rb;
+  env->registers[rd] = res;
 }
 
 void CMPLEU_f(int rd, int ra, int rb, struct Environment *env) {
+  uint16_t value_ra = env->registers[ra];
+  uint16_t value_rb = env->registers[rb];
 
+  uint16_t res = value_ra <= value_rb;
+  env->registers[rd] = res;
 }
 
 /* ADDI */
@@ -151,11 +175,15 @@ void JALR_f(int ra, int rother, struct Environment *env) {
 /* BZ / BNZ */
 
 void BZ_f(int reg, int N8, struct Environment *env) {
-
+  uint16_t value_reg = env->registers[reg];
+  if (value_reg == 0)
+    env->PC += N8*2;
 }
 
 void BNZ_f(int reg, int N8, struct Environment *env) {
-
+  uint16_t value_reg = env->registers[reg];
+  if (value_reg != 0)
+    env->PC += N8*2;
 }
 
 /* MOVI / MOVHI */
@@ -171,7 +199,11 @@ void MOVHI_f(int reg, int N8, struct Environment *env) {
 /* IN / OUT */
 
 void IN_f(int reg, int N8, struct Environment *env) {
-
+  printf("IN: ");
+  uint16_t input;
+  scanf("%hd", &input);
+  
+  env->registers[reg] = input;
 }
 
 void OUT_f(int reg, int N8, struct Environment *env) {
