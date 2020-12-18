@@ -124,11 +124,11 @@ void LD_f(int ra, int rother, int N6, struct Environment *env) {
   int low_byte_decimal = env->memory[mem_pos];
   int high_byte_decimal = env->memory[mem_pos+1];
 
-  uint8_t low_byte[8] = {0}, high_byte[8] = {0};
+  int low_byte[8] = {0}, high_byte[8] = {0};
   decimal_to_base(low_byte_decimal, 2, &low_byte);
   decimal_to_base(high_byte_decimal, 2, &high_byte);
 
-  uint8_t complete_byte[16] = {0};
+  int complete_byte[16] = {0};
   for (int i = 15; i >= 0; --i) {
     if (i >= 8) complete_byte[i] = high_byte[i-8];
     else complete_byte[i] = low_byte[i];
@@ -139,7 +139,24 @@ void LD_f(int ra, int rother, int N6, struct Environment *env) {
 }
 
 void ST_f(int ra, int rother, int N6, struct Environment *env) {
+  int ra_value = env->registers[ra];
+  int mem_pos = ra_value + N6;
 
+  int rother_value = env->registers[rother];
+  int complete_byte[16] = {0};
+  decimal_to_base(rother_value, 2, &complete_byte);
+
+  int low_byte[8] = {0}, high_byte[8] = {0};
+  for (int i = 15; i >= 0; --i) {
+    if (i >= 8) high_byte[i-8] = complete_byte[i];
+    else low_byte[i] = complete_byte[i];
+  }
+
+  int low_byte_decimal = base_to_decimal(&low_byte, 8, 2);
+  int high_byte_decimal = base_to_decimal(&high_byte, 8, 2);
+
+  env->memory[mem_pos] = low_byte_decimal;
+  env->memory[mem_pos+1] = high_byte_decimal;
 }
 
 void LDB_f(int ra, int rother, int N6, struct Environment *env) {
@@ -149,10 +166,10 @@ void LDB_f(int ra, int rother, int N6, struct Environment *env) {
   // env->registers[rother] = env->memory[mem_pos];
   int low_byte_decimal = env->memory[mem_pos];
 
-  uint8_t low_byte[8] = {0};
+  int low_byte[8] = {0};
   decimal_to_base(low_byte_decimal, 2, &low_byte);
 
-  uint16_t complete_byte[16] = {0};
+  int complete_byte[16] = {0};
   for (int i = 15; i >= 0; --i) {
     if (i >= 8) complete_byte[i] = low_byte[7];
     else complete_byte[i] = low_byte[i];

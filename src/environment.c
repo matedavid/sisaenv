@@ -123,26 +123,26 @@ void execute_instruction(struct Environment *env) {
     int N6 = base_to_decimal(N6_binary, 6, 2);
 
     switch (decimal_instruction_code) {
-      case ADDI:
+      case 2:
         ADDI_f(ra, other_r, N6, env);
         break;
-      case LD:
+      case 3:
         LD_f(ra, other_r, N6, env);
         break;
-      case ST:
+      case 4:
         ST_f(ra, other_r, N6, env);
         break;
-      case LDB:
+      case 5:
         LDB_f(ra, other_r, N6, env);
         break;
-      case STB:
+      case 6:
         STB_f(ra, other_r, N6, env);
         break;
-      case JALR:
+      case 7:
         JALR_f(ra, other_r, env);
         break;
       default:
-        printf("Somethinig wrong happened when unparsing instruction\n");
+        printf("Something wrong happened when unparsing instruction: Instruction not recognized\n");
         exit(-1);
         break;
     }
