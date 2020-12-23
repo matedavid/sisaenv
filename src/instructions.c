@@ -147,8 +147,8 @@ void LD_f(int ra, int rother, int N6, struct Environment *env) {
   int high_byte_decimal = env->memory[mem_pos+1];
 
   int low_byte[8] = {0}, high_byte[8] = {0};
-  decimal_to_base(low_byte_decimal, 2, &low_byte);
-  decimal_to_base(high_byte_decimal, 2, &high_byte);
+  decimal_to_base_ca2(low_byte_decimal, 2, 8, &low_byte);
+  decimal_to_base_ca2(high_byte_decimal, 2, 8, &high_byte);
 
   int complete_byte[16] = {0};
   for (int i = 15; i >= 0; --i) {
@@ -156,7 +156,7 @@ void LD_f(int ra, int rother, int N6, struct Environment *env) {
     else complete_byte[i] = low_byte[i];
   }
 
-  int res = base_to_decimal(&complete_byte, 16, 2);
+  int res = base_to_decimal_ca2(&complete_byte, 16, 2);
   env->registers[rother] = res;
 }
 
@@ -166,7 +166,7 @@ void ST_f(int ra, int rother, int N6, struct Environment *env) {
 
   int rother_value = env->registers[rother];
   int complete_byte[16] = {0};
-  decimal_to_base(rother_value, 2, &complete_byte);
+  decimal_to_base_ca2(rother_value, 2, 16, &complete_byte);
 
   int low_byte[8] = {0}, high_byte[8] = {0};
   for (int i = 15; i >= 0; --i) {
@@ -174,8 +174,8 @@ void ST_f(int ra, int rother, int N6, struct Environment *env) {
     else low_byte[i] = complete_byte[i];
   }
 
-  int low_byte_decimal = base_to_decimal(&low_byte, 8, 2);
-  int high_byte_decimal = base_to_decimal(&high_byte, 8, 2);
+  int low_byte_decimal = base_to_decimal_ca2(&low_byte, 8, 2);
+  int high_byte_decimal = base_to_decimal_ca2(&high_byte, 8, 2);
 
   env->memory[mem_pos] = low_byte_decimal;
   env->memory[mem_pos+1] = high_byte_decimal;
@@ -189,7 +189,7 @@ void LDB_f(int ra, int rother, int N6, struct Environment *env) {
   int low_byte_decimal = env->memory[mem_pos];
 
   int low_byte[8] = {0};
-  decimal_to_base(low_byte_decimal, 2, &low_byte);
+  decimal_to_base_ca2(low_byte_decimal, 2, 8, &low_byte);
 
   int complete_byte[16] = {0};
   for (int i = 15; i >= 0; --i) {
@@ -197,7 +197,7 @@ void LDB_f(int ra, int rother, int N6, struct Environment *env) {
     else complete_byte[i] = low_byte[i];
   }
 
-  int res = base_to_decimal(&complete_byte, 16, 2);
+  int res = base_to_decimal_ca2(&complete_byte, 16, 2);
   env->registers[rother] = res;
 }
 
@@ -209,13 +209,13 @@ void STB_f(int ra, int rother, int N6, struct Environment *env) {
 
   int rother_value = env->registers[rother];
   int complete_byte[16] = {0};
-  decimal_to_base(rother_value, 2, &complete_byte);
+  decimal_to_base_ca2(rother_value, 2, 8, &complete_byte);
 
   int low_byte[8] = {0};
   for (int i = 7; i >= 0; --i)
     low_byte[i] = complete_byte[i];
 
-  int low_byte_decimal = base_to_decimal(&low_byte, 8, 2);
+  int low_byte_decimal = base_to_decimal_ca2(&low_byte, 8, 2);
   env->memory[mem_pos] = low_byte_decimal;
 }
 

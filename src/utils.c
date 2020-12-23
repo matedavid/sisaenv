@@ -24,8 +24,9 @@ int base_to_decimal(int *content, int size, int base) {
   return decimal;
 }
 
-void decimal_to_base_ca2(int number, int base, int *binary) {
-
+void decimal_to_base_ca2(int number, int base, int size, int *binary) {
+  if (number < 0) number = number + (int)pow(base, size);
+  decimal_to_base(number, base, binary);
 }
 
 int base_to_decimal_ca2(int *content, int size, int base) {

@@ -113,7 +113,6 @@ void execute_instruction(struct Environment *env) {
     }
 
   } else if (decimal_instruction_code >= 3 && decimal_instruction_code <= 7) {
-
     int ra_binary[3] = {0}, other_r_binary[3] = {0}, N6_binary[6] = {0};
     for (int i = 11; i >= 0; --i) {
       if (i >= 9) ra_binary[i-9] = complete_code[i];
@@ -123,7 +122,7 @@ void execute_instruction(struct Environment *env) {
     
     int ra = base_to_decimal(ra_binary, 3, 2);
     int other_r = base_to_decimal(other_r_binary, 3, 2);
-    int N6 = base_to_decimal(N6_binary, 6, 2);
+    int N6 = base_to_decimal_ca2(N6_binary, 6, 2);
 
     switch (decimal_instruction_code) {
       case 2:
@@ -159,7 +158,7 @@ void execute_instruction(struct Environment *env) {
     }
 
     int reg = base_to_decimal(reg_binary, 3, 2);
-    int N8 = base_to_decimal(N8_binary, 8, 2);
+    int N8 = base_to_decimal_ca2(N8_binary, 8, 2);
 
     if (decimal_instruction_code == 8) {
       if (e_constant == 0) BZ_f(reg, N8, env);

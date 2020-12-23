@@ -119,12 +119,14 @@ void convert_type_2(int decimal_code, int ra, int rother, int N6, int *complete_
   decimal_to_base(ra, 2, &ra_binary);
   decimal_to_base(rother, 2, &rother_binary);
   
+  /*
   // TODO: Add support for negative -> binary conversion
   if (N6 < 0) { 
     N6 = -N6;
     printf("support for negative constants is not supported currently. converting to positive.\n"); 
   }
-  decimal_to_base(N6, 2, &N6_binary);
+  */
+  decimal_to_base_ca2(N6, 2, 6, &N6_binary);
   
   int code_binary[4] = {0};
   decimal_to_base(decimal_code, 2, &code_binary);
@@ -146,13 +148,15 @@ void convert_type_1(int decimal_code, int reg, int e, int N8, int *complete_code
   int reg_binary[3] = {0}, N8_binary[8] = {0};
   decimal_to_base(reg, 2, &reg_binary);
   
+  /*
   // TODO: Add support for negative -> binary conversion
   if (N8 < 0) { 
     N8 = -N8;
     printf("support for negative constants is not supported currently. converting to positive.\n"); 
   }
-  decimal_to_base(N8, 2, &N8_binary);
-  
+  */
+  decimal_to_base_ca2(N8, 2, 8, &N8_binary);
+
   int code_binary[4] = {0};
   decimal_to_base(decimal_code, 2, &code_binary);
 
@@ -209,6 +213,7 @@ void parse_options(enum MNEMONIC token, char *options, int *complete_code) {
 
     int ra = (int)register_a[1] - (int)'0';
     int rother = (int)other_register[1] - (int)'0';
+
     convert_type_2(mnemonic_to_code(token), ra, rother, N6, complete_code);
   } else {
     // Type 1-R
