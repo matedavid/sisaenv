@@ -10,10 +10,10 @@ TODO:
 - [x] Create RAM system (add already-parsed instructions to RAM, basically)
 - [x] Create unparsing functionality (2 byte parsed instruction -> something understandable for execution)
 - [ ] Lay down functionality for each mnemonic
-  - [ ] A/L + ADDI
-  - [ ] CMP
-  - [ ] Memory-Access instructions
+  - [x] A/L + ADDI
+  - [x] CMP
+  - [x] Memory-Access instructions
   - [x] Jump instructions (BNZ, BZ, JALR)
-  - [ ] MOVI / MOVHI instructions
+  - [ ] MOVI / MOVHI instructions (Still have to implement MOVHI)
   - [x] IN / OUT instructions
 
