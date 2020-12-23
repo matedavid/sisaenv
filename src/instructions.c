@@ -220,9 +220,13 @@ void STB_f(int ra, int rother, int N6, struct Environment *env) {
 }
 
 /* JALR */
+// TODO: Make sure JALR is implemented correctly
+void JALR_f(int ra, int  rother, struct Environment *env) {
+  int ra_value = env->registers[ra];
+  env->registers[rother] = env->PC+2;
 
-void JALR_f(int ra, int rother, struct Environment *env) {
-
+  if (ra_value%2 != 0) ra_value += 1;
+  env->PC = ra_value-2; // -2 because, in main loop, after executin instruction PC is increased by 2
 }
 
 /* BZ / BNZ */
@@ -245,8 +249,21 @@ void MOVI_f(int reg, int N8, struct Environment *env) {
   env->registers[reg] = N8;
 }
 
+// TODO: Make sure MOVHI is implemented correctly
 void MOVHI_f(int reg, int N8, struct Environment *env) {
-   
+  int current_value = env->registers[reg];
+  int low_binary[8] = {0}, high_binary[8] = {0};
+  decimal_to_base(current_value, 2, &low_binary);
+  decimal_to_base(N8, 2, &high_binary);
+
+  int complete_binary[16] = {0};
+  for (int i = 15; i >= 0; --i) {
+    if (i >= 8) complete_binary[i] = high_binary[i-8];
+    else complete_binary[i] = low_binary[i];
+  }
+
+  int res = base_to_decimal_ca2(&complete_binary, 16, 2);
+  env->registers[reg] = res;
 }
 
 /* IN / OUT */
