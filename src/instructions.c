@@ -75,11 +75,33 @@ void SHL_f(int rd, int ra, int rb, struct Environment *env) {
 /* CMP Instructions */
 
 void CMPLT_f(int rd, int ra, int rb, struct Environment *env) {
+  int value_ra = env->registers[ra];
+  int value_rb = env->registers[rb];
 
+  int value_ra_binary[16] = {0}, value_rb_binary[16] = {0};
+  decimal_to_base(value_ra, 2, &value_ra_binary);
+  decimal_to_base(value_rb, 2, &value_rb_binary);
+    
+  int value_ra_ca2 = base_to_decimal_ca2(&value_ra_binary, 16, 2);
+  int value_rb_ca2 = base_to_decimal_ca2(&value_rb_binary, 16, 2);
+
+  int res = value_ra_ca2 < value_rb_ca2;
+  env->registers[rd] = res;
 }
 
 void CMPLE_f(int rd, int ra, int rb, struct Environment *env) {
+  int value_ra = env->registers[ra];
+  int value_rb = env->registers[rb];
 
+  int value_ra_binary[16] = {0}, value_rb_binary[16] = {0};
+  decimal_to_base(value_ra, 2, &value_ra_binary);
+  decimal_to_base(value_rb, 2, &value_rb_binary);
+    
+  int value_ra_ca2 = base_to_decimal_ca2(&value_ra_binary, 16, 2);
+  int value_rb_ca2 = base_to_decimal_ca2(&value_rb_binary, 16, 2);
+
+  int res = value_ra_ca2 <= value_rb_ca2;
+  env->registers[rd] = res;
 }
 
 void CMPEQ_f(int rd, int ra, int rb, struct Environment *env) {
@@ -179,8 +201,22 @@ void LDB_f(int ra, int rother, int N6, struct Environment *env) {
   env->registers[rother] = res;
 }
 
-void STB_f(int ra, int rother, int N6, struct Environment *env) {
 
+// TODO: Make sure STB is implemented correclty
+void STB_f(int ra, int rother, int N6, struct Environment *env) {
+  int ra_value = env->registers[ra];
+  int mem_pos = ra_value + N6;
+
+  int rother_value = env->registers[rother];
+  int complete_byte[16] = {0};
+  decimal_to_base(rother_value, 2, &complete_byte);
+
+  int low_byte[8] = {0};
+  for (int i = 7; i >= 0; --i)
+    low_byte[i] = complete_byte[i];
+
+  int low_byte_decimal = base_to_decimal(&low_byte, 8, 2);
+  env->memory[mem_pos] = low_byte_decimal;
 }
 
 /* JALR */

@@ -24,6 +24,19 @@ int base_to_decimal(int *content, int size, int base) {
   return decimal;
 }
 
+void decimal_to_base_ca2(int number, int base, int *binary) {
+
+}
+
+int base_to_decimal_ca2(int *content, int size, int base) {
+  int xs = 0;
+  xs += -content[size-1]*(int)pow(base, size-1);
+  
+  for (int i = size-2; i >= 0; --i)
+    xs += content[i] * (int)pow(base, i);
+  return xs;
+}
+
 void print_binary(int *binary, int size) {
   for (int i = size-1; i >= 0; --i)
     printf("%d", binary[i]);
