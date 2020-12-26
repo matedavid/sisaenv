@@ -27,7 +27,7 @@ The supported instructions and their format are the following:
   * IN Rd,N8
   * OUT N8,Ra
 
-![Instructions Image](https://raw.githubusercontent.com/matedavid/sisaenv/master/static/images/sisa_instructions.png)
+![Instructions Image](https://raw.githubusercontent.com/matedavid/sisaenv/master/.github/sisa_instructions.png)
 
 ### Thinks to take into account
 * The N8 in IN and OUT instructions, technically refers to the direction of external devices (keyboards, printers). As this program is a virtual environment, these numbers don't actually mean nothing at the moment.
